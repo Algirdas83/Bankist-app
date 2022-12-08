@@ -82,13 +82,24 @@ const account1 = {
 
    
 
-const createUserName = (user) => {
-    const userName = user.toLocaleLowerCase().split(' ').map(el => el[0]).join('')
-    return userName
-}
-  
+const createUserName = (accounts) => {
 
-console.log(createUserName(account1.owner)); 
+    accounts.forEach(account => {
+        account.username = account.owner
+        .toLocaleLowerCase()
+        .split(' ')
+        .map(el => el[0]).join('')
+
+    })
+
+    }
+    
+
+
+  
+ createUserName(accounts)
+
+ console.log(accounts);
  
 
   
