@@ -60,6 +60,27 @@ const account1 = {
   const inputLoanAmount = document.querySelector('.form__input--loan-amount');
   const inputCloseUsername = document.querySelector('.form__input--user');
   const inputClosePin = document.querySelector('.form__input--pin');
+
+
+  const displayMovments = (movements) => {
+
+    containerMovements.innerHTML = ''
+    movements.forEach((mov, i )=> {
+        const type = mov > 0 ? 'deposit' : 'withdrawal'
+        const html = ` 
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
+        <div class="movements__value">${mov}€</div>
+      </div>`
+      containerMovements.insertAdjacentHTML("afterbegin",html )
+    })
+
+    
+  }
+
+   displayMovments(account1.movements)
+
+   
   
   // /////////////////////////////////////////////////
   // /////////////////////////////////////////////////
@@ -74,5 +95,26 @@ const account1 = {
    const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
    
-  
   /////////////////////////////////////////////////
+
+
+  ///// Map Method (looping)
+// const eurpToUsd = 1.1
+
+// const movementsUSD = movements.map(mov => mov * eurpToUsd)
+
+// console.log(movementsUSD);
+// console.log(movements);
+
+
+// const movArray = []
+//     for(const mov of movements) movArray.push(mov * eurpToUsd)
+// console.log('For Of Lopyte', movArray);
+
+
+// const movmentsDescriptions = movements.map((mov, i ) => `Movment ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew' }  ${Math.abs(mov)} `)
+
+     
+
+
+
