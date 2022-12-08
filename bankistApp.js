@@ -81,6 +81,16 @@ const account1 = {
    displayMovments(account1.movements)
 
    
+
+const createUserName = (user) => {
+    const userName = user.toLocaleLowerCase().split(' ').map(el => el[0]).join('')
+    return userName
+}
+  
+
+console.log(createUserName(account1.owner)); 
+ 
+
   
   // /////////////////////////////////////////////////
   // /////////////////////////////////////////////////
