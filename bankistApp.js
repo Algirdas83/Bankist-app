@@ -61,9 +61,8 @@ const account1 = {
   const inputCloseUsername = document.querySelector('.form__input--user');
   const inputClosePin = document.querySelector('.form__input--pin');
 
-
+//////////   Func displayMovments
   const displayMovments = (movements) => {
-
     containerMovements.innerHTML = ''
     movements.forEach((mov, i )=> {
         const type = mov > 0 ? 'deposit' : 'withdrawal'
@@ -73,15 +72,33 @@ const account1 = {
         <div class="movements__value">${mov}€</div>
       </div>`
       containerMovements.insertAdjacentHTML("afterbegin",html )
-    })
-
-    
+    }) 
   }
 
    displayMovments(account1.movements)
 
-   
 
+//////////// Func calcDisplayBalance
+   const calcDisplayBalance = (movements) => {
+    const balance = movements.reduce((acc, mov) => acc + mov, 0)
+    labelBalance.textContent = `${balance} Eur`
+    
+} 
+calcDisplayBalance(account1.movements)
+
+////////// calcSummary
+const calcSummary = (movements) => {
+
+    const depositSum = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0)
+    const withdrawalSum = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0 )
+    labelSumIn.textContent = `${depositSum} EUR`
+    labelSumOut.textContent = `${withdrawalSum} EUR`
+
+}
+
+calcSummary(account1.movements)
+   
+//////////// Func createUserName
 const createUserName = (accounts) => {
 
     accounts.forEach(account => {
@@ -94,15 +111,13 @@ const createUserName = (accounts) => {
 
     }
     
+    createUserName(accounts)
 
-
-  
- createUserName(accounts)
-
- console.log(accounts);
+ 
  
 
   
+
   // /////////////////////////////////////////////////
   // /////////////////////////////////////////////////
   // // LECTURES
@@ -114,12 +129,14 @@ const createUserName = (accounts) => {
   
   
    const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
+  
    
   /////////////////////////////////////////////////
 
 
-  ///// Map Method (looping)
+  ///// Map Method (looping elemnts and doing something with them) //////////
+  
+
 // const eurpToUsd = 1.1
 
 // const movementsUSD = movements.map(mov => mov * eurpToUsd)
@@ -135,7 +152,31 @@ const createUserName = (accounts) => {
 
 // const movmentsDescriptions = movements.map((mov, i ) => `Movment ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew' }  ${Math.abs(mov)} `)
 
-     
 
 
+//////// Filter Method (looping and filtering) /////////
 
+
+// const deposits =  movements.filter(mov => mov > 0 )
+// const withdrawal = movements.filter(mov => mov < 0)
+
+// console.log(deposits);
+// console.log(withdrawal);
+
+/////// Reduce Methods (looping and suming)
+
+// const balance = movements.reduce((acc, val) => acc + val)
+//  const depositsSum =  movements.filter(mov => mov > 0 ).reduce((accumulator, currentValue ) => accumulator + currentValue, 0) 
+
+//  const withdrawalSum =  movements.filter(mov => mov < 0 ).reduce((accumulator, currentValue ) => accumulator + currentValue, 0) 
+
+
+// console.log(balance);
+//  console.log(depositsSum);
+//  console.log(withdrawalSum);
+
+
+/// Max value  using reduce
+
+// const testReduce = movements.reduce((acc, mov) => acc > mov ? acc : mov, movements[0]  )
+// console.log(testReduce);
