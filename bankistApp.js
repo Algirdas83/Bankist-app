@@ -134,49 +134,4 @@ const createUserName = (accounts) => {
   /////////////////////////////////////////////////
 
 
-  ///// Map Method (looping elemnts and doing something with them) //////////
   
-
-// const eurpToUsd = 1.1
-
-// const movementsUSD = movements.map(mov => mov * eurpToUsd)
-
-// console.log(movementsUSD);
-// console.log(movements);
-
-
-// const movArray = []
-//     for(const mov of movements) movArray.push(mov * eurpToUsd)
-// console.log('For Of Lopyte', movArray);
-
-
-// const movmentsDescriptions = movements.map((mov, i ) => `Movment ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew' }  ${Math.abs(mov)} `)
-
-
-
-//////// Filter Method (looping and filtering) /////////
-
-
-// const deposits =  movements.filter(mov => mov > 0 )
-// const withdrawal = movements.filter(mov => mov < 0)
-
-// console.log(deposits);
-// console.log(withdrawal);
-
-/////// Reduce Methods (looping and suming)
-
-// const balance = movements.reduce((acc, val) => acc + val)
-//  const depositsSum =  movements.filter(mov => mov > 0 ).reduce((accumulator, currentValue ) => accumulator + currentValue, 0) 
-
-//  const withdrawalSum =  movements.filter(mov => mov < 0 ).reduce((accumulator, currentValue ) => accumulator + currentValue, 0) 
-
-
-// console.log(balance);
-//  console.log(depositsSum);
-//  console.log(withdrawalSum);
-
-
-/// Max value  using reduce
-
-// const testReduce = movements.reduce((acc, mov) => acc > mov ? acc : mov, movements[0]  )
-// console.log(testReduce);
