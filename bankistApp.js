@@ -36,6 +36,7 @@ const account1 = {
   const accounts = [account1, account2, account3, account4];
   
   // Elements
+  const navform = document.querySelector('.login')
   const labelWelcome = document.querySelector('.welcome');
   const labelDate = document.querySelector('.date');
   const labelBalance = document.querySelector('.balance__value');
@@ -61,10 +62,19 @@ const account1 = {
   const inputCloseUsername = document.querySelector('.form__input--user');
   const inputClosePin = document.querySelector('.form__input--pin');
 
+
+
+    let currentAccount;
+
+    
+
+
+
+
 //////////   Func displayMovments
   const displayMovments = (movements) => {
     containerMovements.innerHTML = ''
-    movements.forEach((mov, i )=> {
+    movements.forEach((mov, i ) => {
         const type = mov > 0 ? 'deposit' : 'withdrawal'
         const html = ` 
       <div class="movements__row">
@@ -75,32 +85,36 @@ const account1 = {
     }) 
   }
 
-   displayMovments(account1.movements)
+   
 
 
 //////////// Func calcDisplayBalance
-   const calcDisplayBalance = (movements) => {
-    const balance = movements.reduce((acc, mov) => acc + mov, 0)
-    labelBalance.textContent = `${balance}€`
+   const calcDisplayBalance = (acc) => {
+    acc.balance =acc.movements.reduce((acc, mov) => acc + mov, 0)
+    
+      labelBalance.textContent = `${acc.balance}€`
+      
     
 } 
-calcDisplayBalance(account1.movements)
+
 
 ////////// calcDisplaySummary
-const calcDisplaySummary = (movements) => {
+const calcDisplaySummary = (acount) => {
 
-    const incomes = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0)
-    const out = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0 )
+    const incomes = acount.movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0)
+    const out = acount.movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0 )
     labelSumIn.textContent = `${incomes}€` 
     labelSumOut.textContent = `${Math.abs(out) }€`
-    const interes = movements.filter(mov => mov > 0)
-    .map(dep => dep * 1.2/100 )
+
+    const interes =acount.movements
+    .filter(mov => mov > 0)
+    .map(dep => (dep * acount.interestRate) / 100 )
     .filter((dep, i, arr) =>  dep >= 1)
-    .reduce((acc, dep) => acc + dep)
+    .reduce((acc, dep) => acc + dep, 0)
      labelSumInterest.textContent = `${interes}€`
 }
 
-calcDisplaySummary(account1.movements)
+
    
 //////////// Func createUserName
 const createUserName = (accounts) => {
@@ -117,9 +131,59 @@ const createUserName = (accounts) => {
     
     createUserName(accounts)
 
- 
- 
+    ////// update UI
+    const updateUI = (acc) => {
 
+        displayMovments(acc.movements)
+        
+        calcDisplayBalance(acc)
+        
+        calcDisplaySummary(acc)
+    }
+
+//// Login future
+ 
+    btnLogin.addEventListener('click', (e) => {
+        e.preventDefault()
+        currentAccount = accounts.find((user => user.username === inputLoginUsername.value))
+        if(currentAccount?.pin === +inputLoginPin.value){
+            //Display UI and welcome message
+            containerApp.style.opacity = 100
+            labelWelcome.textContent = `Welcome back ${currentAccount.owner.split(' ')[0]}`
+            //Clear input fields
+            inputLoginUsername.value = inputLoginPin.value = ''
+            inputLoginPin.blur()
+
+           
+            updateUI(currentAccount)
+        }
+        
+        
+    })
+
+    //// Transfer future
+
+    btnTransfer.addEventListener('click', (e) => {
+        e.preventDefault()
+        
+        const amount =  Number(inputTransferAmount.value)
+        const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value) 
+       
+        inputTransferAmount.value = inputTransferTo.value = ''
+        if(amount > 0 && receiverAcc && currentAccount.balance >= amount &&  receiverAcc.username !== currentAccount.username ){
+
+            currentAccount.movements.push(-amount)
+            receiverAcc.movements.push(amount)
+        
+            updateUI(currentAccount)
+             
+
+        } 
+        
+        
+    })
+
+    
   
 
   // /////////////////////////////////////////////////
@@ -138,4 +202,4 @@ const createUserName = (accounts) => {
   /////////////////////////////////////////////////
 
 
-  
+
