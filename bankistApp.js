@@ -81,22 +81,26 @@ const account1 = {
 //////////// Func calcDisplayBalance
    const calcDisplayBalance = (movements) => {
     const balance = movements.reduce((acc, mov) => acc + mov, 0)
-    labelBalance.textContent = `${balance} Eur`
+    labelBalance.textContent = `${balance}€`
     
 } 
 calcDisplayBalance(account1.movements)
 
-////////// calcSummary
-const calcSummary = (movements) => {
+////////// calcDisplaySummary
+const calcDisplaySummary = (movements) => {
 
-    const depositSum = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0)
-    const withdrawalSum = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0 )
-    labelSumIn.textContent = `${depositSum} EUR`
-    labelSumOut.textContent = `${withdrawalSum} EUR`
-
+    const incomes = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0)
+    const out = movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0 )
+    labelSumIn.textContent = `${incomes}€` 
+    labelSumOut.textContent = `${Math.abs(out) }€`
+    const interes = movements.filter(mov => mov > 0)
+    .map(dep => dep * 1.2/100 )
+    .filter((dep, i, arr) =>  dep >= 1)
+    .reduce((acc, dep) => acc + dep)
+     labelSumInterest.textContent = `${interes}€`
 }
 
-calcSummary(account1.movements)
+calcDisplaySummary(account1.movements)
    
 //////////// Func createUserName
 const createUserName = (accounts) => {
