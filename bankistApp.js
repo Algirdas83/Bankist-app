@@ -72,9 +72,13 @@ const account1 = {
 
 
 //////////   Func displayMovments
-  const displayMovments = (movements) => {
+  const displayMovments = (movements, sort = false) => {
     containerMovements.innerHTML = ''
-    movements.forEach((mov, i ) => {
+
+    const movs = sort ? movements.slice().sort((a, b) => a - b): movements
+
+
+    movs.forEach((mov, i ) => {
         const type = mov > 0 ? 'deposit' : 'withdrawal'
         const html = ` 
       <div class="movements__row">
@@ -86,7 +90,7 @@ const account1 = {
   }
 
    
-
+  
 
 //////////// Func calcDisplayBalance
    const calcDisplayBalance = (acc) => {
@@ -130,6 +134,19 @@ const createUserName = (accounts) => {
     }
     
     createUserName(accounts)
+
+    ///sort button function
+
+    let sortedState = false
+
+    btnSort.addEventListener('click', e => {
+     e.preventDefault()
+     displayMovments(currentAccount.movements, !sortedState )
+     sortedState = !sortedState
+     
+    })
+
+    
 
     ////// update UI /// function for refactoring
     const updateUI = (acc) => {
