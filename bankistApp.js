@@ -131,7 +131,7 @@ const createUserName = (accounts) => {
     
     createUserName(accounts)
 
-    ////// update UI
+    ////// update UI /// function for refactoring
     const updateUI = (acc) => {
 
         displayMovments(acc.movements)
@@ -176,15 +176,45 @@ const createUserName = (accounts) => {
             receiverAcc.movements.push(amount)
         
             updateUI(currentAccount)
-             
+        }  
+    })
 
-        } 
+    // Loan request
+    
+     
+
+    btnLoan.addEventListener('click', (e) => {
+        e.preventDefault()
         
+        const loanAmount = Number(inputLoanAmount.value ) 
         
+        if(loanAmount > 0 && currentAccount.movements.some(mov => mov >= loanAmount * 0.1 )){
+            currentAccount.movements.push(loanAmount)
+            updateUI(currentAccount)
+        }
+         
+        
+        inputLoanAmount.value = ''
     })
 
     
-  
+  //CloseAcount
+
+  btnClose.addEventListener('click', (e) => {
+    e.preventDefault()
+    
+    const acountCloseUserName = inputCloseUsername.value
+    const acountClosePin =Number(inputClosePin.value) 
+    currentAccount
+    if(acountCloseUserName && acountCloseUserName === currentAccount.username && acountClosePin === currentAccount.pin ){
+        const index = accounts.findIndex(acc =>  acc.username === acountCloseUserName)
+         accounts.splice(index, 1)
+         containerApp.style.opacity = 0
+         
+    }
+    
+    inputCloseUsername.value = inputClosePin.value = ''
+  })
 
   // /////////////////////////////////////////////////
   // /////////////////////////////////////////////////
@@ -200,6 +230,5 @@ const createUserName = (accounts) => {
   
    
   /////////////////////////////////////////////////
-
 
 
