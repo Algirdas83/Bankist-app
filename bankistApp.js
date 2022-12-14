@@ -221,8 +221,8 @@ const createUserName = (accounts) => {
     e.preventDefault()
     
     const acountCloseUserName = inputCloseUsername.value
-    const acountClosePin =Number(inputClosePin.value) 
-    currentAccount
+    const acountClosePin = Number(inputClosePin.value) 
+    
     if(acountCloseUserName && acountCloseUserName === currentAccount.username && acountClosePin === currentAccount.pin ){
         const index = accounts.findIndex(acc =>  acc.username === acountCloseUserName)
          accounts.splice(index, 1)
@@ -247,5 +247,8 @@ const createUserName = (accounts) => {
   
    
   /////////////////////////////////////////////////
+
+
+
 
 
