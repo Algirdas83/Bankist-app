@@ -15,10 +15,10 @@ const account1 = {
       '2019-12-23T07:42:02.383Z',
       '2020-01-28T09:15:04.904Z',
       '2020-04-01T10:17:24.185Z',
-      '2020-05-08T14:11:59.604Z',
-      '2020-05-27T17:01:17.194Z',
-      '2020-07-11T23:36:17.929Z',
-      '2020-07-12T10:51:36.790Z',
+      '2022-12-16T14:11:59.604Z',
+      '2022-12-12T17:01:17.194Z',
+      '2022-12-21T23:36:17.929Z',
+      '2022-12-22T10:51:36.790Z',
     ],
     currency: 'EUR',
     locale: 'pt-PT', // de-DE
@@ -35,9 +35,9 @@ const account1 = {
       '2019-12-25T06:04:23.907Z',
       '2020-01-25T14:18:46.235Z',
       '2020-02-05T16:33:06.386Z',
-      '2020-04-10T14:43:26.374Z',
-      '2020-06-25T18:49:59.371Z',
-      '2020-07-26T12:01:20.894Z',
+      '2022-12-10T14:43:26.374Z',
+      '2022-12-12T18:49:59.371Z',
+      '2022-12-20T12:01:20.894Z',
     ],
     currency: 'USD',
     locale: 'en-US',
@@ -88,7 +88,7 @@ const account1 = {
 
 
 
-    let currentAccount;
+    let currentAccount, timer;
 
     
 
@@ -96,19 +96,60 @@ const account1 = {
 
 
 //////////   Func displayMovments
-  const displayMovments = (movements, sort = false) => {
+
+
+//// Time functionality 
+
+const formatMovementDate = (date, local) => {
+
+        const calcDaysPassed = (date1, date2) => Math.round( Math.abs(date2 - date1)/(1000 * 60 * 60 * 24 ))
+        const daysPassed = calcDaysPassed(new Date(), date)
+        
+        if(daysPassed === 0)
+        return `Today`
+        if(daysPassed === 1)
+        return `Yesterday`
+        if(daysPassed <= 7 ) return `${daysPassed} days ago`
+        else {
+          // const day = `${date.getDate()}`.padStart(2, 0)
+          // const month = `${date.getMonth() + 1}`.padStart(2, 0)
+          // const year = date.getFullYear()
+          // return `${day}/${month}/${year}`
+         
+          return new Intl.DateTimeFormat(local).format(date)
+         }
+}
+
+const formatCur = (value,locale, currency) => {
+  return new Intl.NumberFormat(locale, 
+    {style:'currency', 
+    currency: currency })
+    .format(value)
+}
+
+
+
+  const displayMovments = (acc, sort = false) => {
     containerMovements.innerHTML = ''
 
-    const movs = sort ? movements.slice().sort((a, b) => a - b): movements
+    const movs = sort ? acc.movements.slice().sort((a, b) => a - b): acc.movements
 
-
+     
     movs.forEach((mov, i ) => {
         const type = mov > 0 ? 'deposit' : 'withdrawal'
+        const date = new Date(acc.movementsDates[i]) 
+        const formattedMov = formatCur(mov, acc.local, acc.currency )
+        
+        const displayDate = formatMovementDate(date, acc.locale)
+       
         const html = ` 
+        
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__date">${displayDate}</div>
+        <div class="movements__value">${formattedMov}</div>
       </div>`
+
       containerMovements.insertAdjacentHTML("afterbegin",html )
     }) 
   }
@@ -119,10 +160,8 @@ const account1 = {
 //////////// Func calcDisplayBalance
    const calcDisplayBalance = (acc) => {
     acc.balance =acc.movements.reduce((acc, mov) => acc + mov, 0)
-    
-      labelBalance.textContent = `${acc.balance.toFixed(2)}€`
-      
-    
+
+      labelBalance.textContent = `${formatCur(acc.balance, acc.locale, acc.currency)}`
 } 
 
 
@@ -131,15 +170,15 @@ const calcDisplaySummary = (acount) => {
 
     const incomes = acount.movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0)
     const out = acount.movements.filter(mov => mov < 0).reduce((acc, mov) => acc + mov, 0 )
-    labelSumIn.textContent = `${incomes.toFixed(2)}€` 
-    labelSumOut.textContent = `${Math.abs(out).toFixed(2) }€`
+    labelSumIn.textContent = `${formatCur(incomes, acount.locale, acount.currency )}` 
+    labelSumOut.textContent = `${formatCur(Math.abs(out), acount.locale, acount.currency )}`
 
     const interes =acount.movements
     .filter(mov => mov > 0)
     .map(dep => (dep * acount.interestRate) / 100 )
     .filter((dep, i, arr) =>  dep >= 1)
     .reduce((acc, dep) => acc + dep, 0)
-     labelSumInterest.textContent = `${interes.toFixed(2)}€`
+     labelSumInterest.textContent = `${formatCur(interes, acount.locale, acount.currency)}`
 }
 
 
@@ -165,7 +204,7 @@ const createUserName = (accounts) => {
 
     btnSort.addEventListener('click', e => {
      e.preventDefault()
-     displayMovments(currentAccount.movements, !sortedState )
+     displayMovments(currentAccount, !sortedState )
      sortedState = !sortedState
      
     })
@@ -173,14 +212,43 @@ const createUserName = (accounts) => {
     
 
     ////// update UI /// function for refactoring
-    const updateUI = (acc) => {
+    const updateUI =  (acc) => {
 
-        displayMovments(acc.movements)
+        displayMovments(acc)
         
         calcDisplayBalance(acc)
         
         calcDisplaySummary(acc)
     }
+
+    ////Logout Timer
+    const startLogOutTimer = () => {
+       const tick = () => {
+        const min = String(Math.trunc(time / 60) ).padStart(2, 0) 
+        const sec = String(time % 60).padStart(2, 0) 
+        // In each call, print the remaining time  to ui
+
+        labelTimer.textContent = `${min}:${sec}`
+       
+        //When we are at 0 sec  stop timer and log out
+        if(time === 0 ){
+          clearInterval(timer)
+          containerApp.style.opacity = 0
+          labelWelcome.textContent = `Login to get started`
+        }
+        time--
+      }
+      //set Time 
+      let time = 120
+      //Call the timer  every second
+      tick()
+      const timer = setInterval(tick, 1000)
+      return timer
+    }
+
+    
+   
+  
 
 //// Login future
  
@@ -191,11 +259,31 @@ const createUserName = (accounts) => {
             //Display UI and welcome message
             containerApp.style.opacity = 100
             labelWelcome.textContent = `Welcome back ${currentAccount.owner.split(' ')[0]}`
+
+            //Curent Date time 
+             const now = new Date()
+             const options = {
+              hour: 'numeric',
+              minute: 'numeric',
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric',
+              //weekday: 'long'
+             }
+             
+             labelDate.textContent = new Intl.DateTimeFormat(currentAccount.locale , options).format(now)
+             
+              
+              
+            
+             
+
             //Clear input fields
             inputLoginUsername.value = inputLoginPin.value = ''
             inputLoginPin.blur()
-
-           
+             //Timer
+             if(timer){clearInterval(timer)}
+           timer = startLogOutTimer()
             updateUI(currentAccount)
         }
         
@@ -215,8 +303,15 @@ const createUserName = (accounts) => {
 
             currentAccount.movements.push(-amount)
             receiverAcc.movements.push(amount)
+            //Add transfere date
+            receiverAcc.movementsDates.push(new Date().toISOString())
+            currentAccount.movementsDates.push(new Date().toISOString())
         
             updateUI(currentAccount)
+
+            //Reset timer
+            clearInterval(timer)
+            timer = startLogOutTimer()
         }  
     })
 
@@ -230,8 +325,15 @@ const createUserName = (accounts) => {
         const loanAmount = Math.floor(inputLoanAmount.value)   
         
         if(loanAmount > 0 && currentAccount.movements.some(mov => mov >= loanAmount * 0.1 )){
+
+          setTimeout(() => {
             currentAccount.movements.push(loanAmount)
+            currentAccount.movementsDates.push(new Date().toISOString())
             updateUI(currentAccount)
+            clearInterval(timer)
+            timer = startLogOutTimer()
+          }, 2000)
+          
         }
          
         
@@ -257,11 +359,6 @@ const createUserName = (accounts) => {
     inputCloseUsername.value = inputClosePin.value = ''
   })
 
-  // /////////////////////////////////////////////////
-  // /////////////////////////////////////////////////
-  // // LECTURES
   
 
-  
 
-  
